@@ -1,123 +1,77 @@
-# NDVI Calculator & Time-Series Analysis — Sentinel-2 Satellite Data
+# 🌱 Crop Health Monitoring Using Sentinel-2 Satellite Imagery
 
-This is a small starter project: it takes raw Sentinel-2 satellite band data
-(Red and Near-Infrared) and computes **NDVI (Normalized Difference Vegetation
-Index)** — a measure of vegetation health used widely in agriculture, crop
-monitoring, and environmental analysis.
+### NDVI-Based Crop Health Assessment and Temporal Vegetation Analysis
 
-It now also includes a **time-series analysis** across 3 dates, showing how
-vegetation health changes over time — including a trend chart and a
-"change map" highlighting where vegetation increased or decreased.
+A remote-sensing based crop health monitoring system developed using
+**Sentinel-2 satellite imagery**, **NDVI (Normalized Difference Vegetation Index)**,
+Python, and Streamlit.
 
-This was built as a first step toward exploring satellite-data + AI projects
-(e.g. crop health / irrigation advisory systems).
-
----
-
-## What is NDVI?
-
-NDVI = (NIR − Red) / (NIR + Red)
-
-- Healthy plants reflect a lot of near-infrared (NIR) light and absorb red light.
-- The result ranges from -1 to +1:
-  - **> 0.5** → healthy, dense vegetation
-  - **0.2 – 0.5** → moderate/sparse vegetation, possibly stressed crops
-  - **0 – 0.2** → very sparse vegetation or bare soil
-  - **<= 0** → water, rock, urban areas, no vegetation
+The project analyzes vegetation conditions using the Red and
+Near-Infrared spectral bands of Sentinel-2 imagery. It generates
+NDVI maps for different observation dates, performs temporal
+vegetation analysis, and provides an interactive dashboard for
+visualizing the results.
 
 ---
 
-## Project Structure
+## 📌 Project Overview
 
-```
-ndvi_project/
-├── compute_ndvi.py          # single-date NDVI script
-├── timeseries_ndvi.py        # multi-date NDVI + trend + change map
-├── data/
-│   ├── 2026-03-29/
-│   │   ├── B04_Red.tiff
-│   │   └── B08_NIR.tiff
-│   ├── 2026-04-28/
-│   │   ├── B04_Red.tiff
-│   │   └── B08_NIR.tiff
-│   └── 2026-06-02/
-│       ├── B04_Red.tiff
-│       └── B08_NIR.tiff
-├── output/
-│   ├── ndvi_<date>.tif       # NDVI GeoTIFF per date
-│   ├── ndvi_<date>.png       # NDVI visual map per date
-│   ├── ndvi_trend.png        # Average NDVI over time (line chart)
-│   └── ndvi_difference.png   # Change map (last date - first date)
-└── README.md
-```
+Crop health monitoring using conventional field surveys can require
+significant time and resources. Satellite imagery provides a
+practical way to observe vegetation conditions over larger areas.
+
+This project demonstrates a satellite-based approach for vegetation
+and crop-health assessment using the **Normalized Difference
+Vegetation Index (NDVI)**.
+
+The workflow uses Sentinel-2 spectral information to calculate NDVI
+and visualize spatial vegetation conditions across multiple
+observation dates.
+
+The generated results are presented through an interactive
+**Streamlit dashboard**.
 
 ---
 
-## How to Run
+## 🎯 Objectives
 
-1. Install dependencies:
-   ```
-   pip install rasterio numpy matplotlib
-   ```
+The main objectives of this project are:
 
-2. Run the single-date script (computes NDVI for one date):
-   ```
-   python compute_ndvi.py
-   ```
-
-3. Run the time-series script (computes NDVI for all 3 dates, trend chart, change map):
-   ```
-   python timeseries_ndvi.py
-   ```
-
-Output will be generated in the `output/` folder.
+- To explore Sentinel-2 multispectral satellite imagery for
+  vegetation monitoring.
+- To use the Red (B04) and Near-Infrared (B08) bands for NDVI
+  calculation.
+- To generate spatial NDVI maps.
+- To interpret vegetation conditions using NDVI ranges.
+- To compare vegetation conditions across different observation
+  dates.
+- To generate an NDVI difference map for temporal comparison.
+- To develop an interactive Streamlit-based visualization interface.
 
 ---
 
-## Where the Data Came From
+## 🛰️ Satellite Imagery
 
-Data downloaded from **Copernicus Browser**
-(https://browser.dataspace.copernicus.eu) — free, no special access required.
+The project is based on **Sentinel-2 Level-2A multispectral
+imagery**.
 
-Settings used:
-- Satellite: Sentinel-2 L2A
-- Bands: B04 (Red), B08 (Near-Infrared) — Raw, 16-bit
-- Coordinate System: WGS 84 (EPSG:4326)
-- Dates: 29 March 2026, 28 April 2026, 02 June 2026 (same area, for time-series comparison)
+### Spectral Bands Used
 
----
+| Band | Description | Role |
+|------|-------------|------|
+| B04 | Red | Red reflectance |
+| B08 | Near-Infrared (NIR) | Vegetation response |
 
-## Findings So Far
-
-- **Average NDVI trend:** 0.345 (Mar 29) -> 0.287 (Apr 28) -> 0.304 (Jun 2)
-  — a dip after late March likely reflects rabi (winter crop) harvest,
-  with partial green-up by early June (pre-monsoon sowing).
-- **Change map (Mar 29 -> Jun 2):** ~46% of the area shows a notable NDVI
-  decrease (harvested fields), ~20% shows an increase (newly sown/growing
-  fields), and the rest is roughly stable.
-- This kind of before/after comparison is the basic signal an irrigation or
-  crop-stage advisory system would use to flag fields that may need attention.
+The Red and Near-Infrared bands are used to calculate the
+Normalized Difference Vegetation Index.
 
 ---
 
-## Next Steps / Ideas
+## 🧮 NDVI Calculation
 
-- **Time-series analysis**: download the same area across multiple dates to
-  track how vegetation health changes over a crop's growth cycle.
-- **Combine with soil moisture data** (e.g. Sentinel-1 radar/SAR) for a more
-  complete crop-stress picture.
-- **Build a dashboard**: visualize NDVI zones on an interactive map (e.g. with
-  a PWA + Firebase backend) — color-code areas by health status.
-- **Add irrigation advisory logic**: based on NDVI + moisture thresholds,
-  generate simple recommendations (e.g. "Zone 3: low NDVI + low moisture →
-  irrigation recommended").
+NDVI is calculated using the following equation:
 
----
-
-## Concepts Covered
-
-- Reading raw satellite imagery (GeoTIFF) with `rasterio`
-- Understanding multispectral bands (Red, NIR)
-- Computing a remote-sensing vegetation index (NDVI)
-- Classifying pixel values into meaningful categories
-- Visualizing geospatial raster data with `matplotlib`
+```text
+              B08 - B04
+NDVI = -------------------------
+              B08 + B04
